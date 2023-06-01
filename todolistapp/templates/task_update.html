@@ -1,0 +1,30 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <h1>Edit Task</h1>
+
+  <form method="POST" action="{% url 'task_update' task.pk %}">
+    {% csrf_token %}
+    <label for="title">Title:</label>
+    <input type="text" name="title" maxlength="100" value="{{ task.title }}" required>
+    <br><br>
+    <label for="description">Description:</label>
+    <textarea name="description" rows="4" cols="50" maxlength="1000" required>{{ task.description }}</textarea>
+    <br><br>
+    <label for="due_date">Due Date:</label>
+    <input type="date" name="due_date" value="{{ task.due_date|default_if_none:'' }}">
+    <br><br>
+    <label for="status">Status:</label>
+    <select name="status">
+      <option value="OPEN" {% if task.status == 'OPEN' %}selected{% endif %}>Open</option>
+      <option value="WORKING" {% if task.status == 'WORKING' %}selected{% endif %}>Working</option>
+      <option value="DONE" {% if task.status == 'DONE' %}selected{% endif %}>Done</option>
+      <option value="OVERDUE" {% if task.status == 'OVERDUE' %}selected{% endif %}>Overdue</option>
+    </select>
+    <br><br>
+    <label for="tags">Tags:</label>
+    <input type="text" name="tags" placeholder="Tag1, Tag2, Tag3" value="{% for tag in task.tags.all %}{{ tag.value }}{% if not forloop.last %}, {% endif %}{% endfor %}">
+    <br><br>
+    <input type="submit" value="Update Task">
+  </form>
+{% endblock %}
